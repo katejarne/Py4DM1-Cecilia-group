@@ -21,6 +21,7 @@ class JsonCleaner:
         """
 
         # TODO (Task 2): implement this method
+	#here is a comment written by Clemens
         raise NotImplementedError("load_json is not implemented yet")
 
 
