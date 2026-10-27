@@ -23,15 +23,17 @@ class SEMMetaData:
         self.image_metadata = {}
 
     def OpenCheckImage(self, image):
-        """
-        Opens an image file and verifies its accessibility and format.
-        Returns:
-            PIL Image object if successful
-            False otherwise
-        """
+	if not image.endswith(self.semext):
+		return False
+	try:
+		img = Image.open(image)
+		img.load()
+		return img
 
-        # TODO (Task 1): implement this method
-        raise NotImplementedError("OpenCheckImage is not implemented yet")       
+	except OSError:
+		print("[ERROR]", image)
+		return False 
+
 
 
     def ImageMetadata(self, img):
