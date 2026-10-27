@@ -36,8 +36,11 @@ class SEMVisualizer:
         Reads the cleaned JSON file (self.json_path) into self.metadata.
         """
 
+        with open(self.json_path, "r", encoding="utf-8") as f:
+            self.metadata = json.load(f)
+
         # TODO (Task 3): implement this method
-        raise NotImplementedError("load_metadata is not implemented yet")       
+        # raise NotImplementedError("load_metadata is not implemented yet")
 
 
     def clean_value(self, raw_value, variable_name=None):
@@ -82,9 +85,16 @@ class SEMVisualizer:
         Missing variables give (name, "N/A", "N/A").
         Return the list of formatted metadata rows
         """
-
+        rows = []
+        for name in self.variables:
+            if name in self.metadata:
+                value, unit = self.clean_value(self.metadata[name], variable_name=name)
+            else:
+                value, unit = ("N/A", "N/A")
+            rows.append((name, value, unit))
+        return rows
         # TODO (Task 3): implement this method
-        raise NotImplementedError("extract_variables is not implemented yet")
+        # raise NotImplementedError("extract_variables is not implemented yet")
 
 
 
@@ -101,9 +111,42 @@ class SEMVisualizer:
         4. Saves the figure as ./output/<image name without extension>.png
         5. Displays the figure, then closes it.
         """
+    def show_image_with_table(self):
+        """
+        Displays the SEM image alongside a formatted metadata
+        table and saves the combined output as a figure.
+        """
+        # 1. Load metadata
+        self.load_metadata()
 
+        # 2. Extract variables and prepare rows for the table
+        extracted = self.extract_variables()
+        rows = [[name, value, unit] for name, value, unit in extracted]
+
+        # 3. Create figure with two vertically stacked panels
+        fig, (ax_img, ax_table) = plt.subplots(2, 1, figsize=(8, 8))
+
+        # 4. Top panel: grayscale image
+        img = plt.imread(self.image_path)
+        ax_img.imshow(img, cmap="gray")
+        ax_img.axis("off")
+
+        # 5. Bottom panel: metadata table
+        ax_table.table(
+            cellText=rows,
+            colLabels=["Variable", "Value", "Unit"],
+            loc="center"
+        )
+        ax_table.axis("off")
+
+        # 6. Save and close
+        os.makedirs("./output", exist_ok=True)
+        stem = os.path.splitext(os.path.basename(self.image_path))[0]
+        fig.savefig(f"./output/{stem}.png", bbox_inches="tight")
+        #plt.show()
+        plt.close(fig)
         # TODO (Task 3): implement this method
-        raise NotImplementedError("show_image_with_table is not implemented yet")    
+        # raise NotImplementedError("show_image_with_table is not implemented yet")
         
 
  
